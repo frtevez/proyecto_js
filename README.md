@@ -1,5 +1,10 @@
 # proyecto_js
 
-Aplicación de Asignación de Ingresos
+Aplicación de Asignación de Ingresos (Pre-entrega 2)
 ---
-El objeto del programa es asistir al usuario en la administración de sus ingresos. Se le solicitará dividir el 100% de sus ingresos en tantas partes como desee, para luego asignarles un nombre. Finalmente, deberá ingresar tanto su saldo actual como su saldo mensual, y con todo esto se le mostrará la distribución de sus ingresos.
+
+En esta ocasión el código es un poco rudimentario, pero creo que las consignas se cumplen:
+- Cambios en el DOM desde javascript
+- App con una funcionalidad (el ingreso se distribuye entre los porcentajes de distribución creados, y no se puede exceder el 100% entre todas las cartas de distribución)
+
+Más adelante estaré mejorando la aplicación...

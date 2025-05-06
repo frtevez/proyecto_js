@@ -8,19 +8,18 @@
     <title>Proyecto JS</title>
   </head>
   <body>
-    <h1>Aplicación de Asignación de Ingresos</h1>
-    <p>
-      El objeto del programa es asistir al usuario en la administración de sus
-      ingresos.
-      <br />
-      Se le solicitará dividir el 100% de sus ingresos en tantas partes como
-      desee,
-      <br />
-      para luego asignarles un nombre.
-      <br />
-      Finalmente, deberá ingresar tanto su saldo actual como su saldo mensual,
-      <br />
-      y con todo esto se le mostrará la distribución de sus ingresos.
-    </p>
+    <section id="appbar">
+      <p style="color: white; text-align:end">Ingresos (Placeholder): $10.450</p>
+    </section>
+    <section id="content">
+      <div id="sidebar">
+        <a id="distribution-tab" class="tab" name="selected" href="index.html"><h2>Distribución</h2></a>
+        <a id="income-tab" class="tab" href="./pages/income.html"><h2>Ingresos</h2></a>
+      </div>
+      <div id="main">
+        <article id="add-distribution-card">+</article>
+      </div>
+    </section>
+    <section id="footer"></section>
   </body>
 </html>
