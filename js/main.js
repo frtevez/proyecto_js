@@ -1,9 +1,7 @@
-const mainContent = document.getElementById('main');
+const distributionCardGrid = document.getElementById('distribution-card-grid');
 const addDistributionCardButton = document.getElementById('add-distribution-card');
-let income = {
-    monthly: 0,
-    yearly: 0,
-};
+let income = 10000;
+let balance = 1000000;
 let incomeDistribution = [];
 
 
@@ -12,19 +10,33 @@ const createDistributionCard = () => {
     const index = incomeDistribution.length;
     const id = `d-card-${index}`;
 
-    const percentageForm = document.createElement('form');
-    percentageForm.id = `percentage-form-${id}`;
-    percentageForm.innerHTML = `
+    const thisCardPercentageSetterForm = document.createElement('form');
+    thisCardPercentageSetterForm.id = `percentage-form-${id}`;
+    thisCardPercentageSetterForm.innerHTML = `
     <input type="number" placeholder="0" step="0.1" max=100 name="percentage">%
     <input type="submit" value="✔">
     `;
 
     incomeDistribution[index] = 0;
 
-    let percentageDisplay = document.createElement('p');
-    const updatePercentageDisplay = () => percentageDisplay.innerText = `${incomeDistribution[index]}%
-    Ingreso: ${10450 * incomeDistribution[index] / 100}
+    let thisCardPercentageDisplay = document.createElement('div');
+    thisCardPercentageDisplay.className = "distribution-card-values";
+    const updatePercentageDisplay = () => {
+        const formattedIncome = (income * incomeDistribution[index] / 100).toLocaleString('es-ES', { style: 'currency', currency: 'USD' });
+        const formattedBalance = (balance * incomeDistribution[index] / 100).toLocaleString('es-ES', { style: 'currency', currency: 'USD' });
+
+        thisCardPercentageDisplay.innerHTML = `
+        <p class="distribution-card-percentage">
+        ${incomeDistribution[index]}%
+        </p>
+        <p class="distribution-card-income-x-percentage">
+        Ingreso: ${formattedIncome}
+        </p>
+        <p class="distribution-card-balance-x-percentage">
+        Balance: ${formattedBalance}
+        </p>
     `;
+    };
     updatePercentageDisplay();
 
 
@@ -42,16 +54,16 @@ const createDistributionCard = () => {
     setTimeout(() => {
         const thisCard = document.getElementById(id);
 
-        thisCard.appendChild(percentageDisplay);
+        thisCard.appendChild(thisCardPercentageDisplay);
 
-        percentageForm.onsubmit = e => {
+        thisCardPercentageSetterForm.onsubmit = e => {
             e.preventDefault();
-            thisCard.replaceChild(percentageDisplay, percentageForm);
-            const percentage = parseFloat(percentageForm.elements["percentage"].value);
+            thisCard.replaceChild(thisCardPercentageDisplay, thisCardPercentageSetterForm);
+            const percentage = parseFloat(thisCardPercentageSetterForm.elements["percentage"].value);
             let distributionSum = incomeDistribution.reduce((acc, cv) => acc + cv, 0)
 
-            if (distributionSum + percentage > 100.0) {
-                percentageForm.elements["percentage"].value = "0";
+            if (distributionSum + percentage > 100.0 || isNaN(percentage)) {
+                thisCardPercentageSetterForm.elements["percentage"].value = "0";
                 return
             };
             incomeDistribution[index] = percentage;
@@ -59,8 +71,8 @@ const createDistributionCard = () => {
         };
 
         thisCard.addEventListener('click', e => {
-            if (e.currentTarget.contains(percentageForm)) return;
-            e.currentTarget.replaceChild(percentageForm, percentageDisplay)
+            if (e.currentTarget.contains(thisCardPercentageSetterForm)) return;
+            e.currentTarget.replaceChild(thisCardPercentageSetterForm, thisCardPercentageDisplay)
         });
     }, 0);
 
@@ -69,5 +81,5 @@ const createDistributionCard = () => {
 
 addDistributionCardButton.addEventListener('click', e => {
     let distributionCard = createDistributionCard();
-    mainContent.insertBefore(distributionCard, mainContent.lastElementChild);
+    distributionCardGrid.insertBefore(distributionCard, distributionCardGrid.lastElementChild);
 });
