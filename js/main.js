@@ -52,52 +52,7 @@ const setBalance = () => {
 const setBalanceBtn = document.getElementsByClassName('set-balance-btn')[0];
 setBalanceBtn.addEventListener('click', e => setBalance())
 
-const distributionCardsInputs = document.querySelectorAll('.distribution-card .input');
-distributionCardsInputs.forEach(input => {
-    const adjustWidth = () => {
-        input.style.width = '1ch';
-        input.style.width = input.scrollWidth + 'px';
-    };
-    adjustWidth();
 
-    const index = parseInt(input.closest('.distribution-card').id.replace(/\D/g, ''));
-    input.addEventListener('input', e => {
-        adjustWidth();
-        const allowedCharacters = /[^a-zA-Z0-9 .,:%()-]/g;
-        // Por el momento no se me ocurrio una forma mejor de crear un input con wrap que no sea un div con
-        // contenteditable, y esto tiene ciertos bugs. Por cuestión de tiempo, lo dejo como está.
-        if (input.tagName === 'DIV') {
-            if (e.data === ' ') {
-                e.preventDefault();
-                incomeDistribution[index].description = input.textContent;
-            }
-            else {
-                input.textContent = input.textContent.replace(allowedCharacters, '');
-                incomeDistribution[index].description = input.textContent;
-            };
-        }
-        else if (input.type === 'text') {
-            input.value = input.value.replace(allowedCharacters, '');
-            incomeDistribution[index].title = input.value;
-        }
-        else if (input.type === 'number') {
-            input.value = input.value
-            input.value = Math.max(0, Math.min(100, input.value));
-
-            let percentagesSum = incomeDistribution.reduce((sum, distr, idx) => {
-                return idx === index ? sum : sum + parseInt(distr.percentage);
-            }, 0);
-
-            if ((percentagesSum + parseInt(input.value)) > 100) {
-                input.value = 100 - percentagesSum;
-            }
-            incomeDistribution[index].percentage = input.value;
-
-            console.log(incomeDistribution);
-        }
-
-    });
-});
 
 
 const createDistributionCard = () => {
@@ -106,6 +61,8 @@ const createDistributionCard = () => {
     const id = `d-card-${index}`;
     distributionCard.className = 'distribution-card';
     distributionCard.id = id;
+    console.log(id);
+    
 
     distributionCard.innerHTML = `
         <div class="distribution-card-header">
@@ -139,14 +96,11 @@ const createDistributionCard = () => {
         </div>
     `
 
-    const thisCardPercentageSetterForm = document.createElement('form');
-    thisCardPercentageSetterForm.id = `percentage-form-${id}`;
-    thisCardPercentageSetterForm.innerHTML = `
-    <input type="number" placeholder="0" step="0.1" max=100 name="percentage">%
-    <input type="submit" value="✔">
-    `;
-
-    incomeDistribution[index] = 0;
+    incomeDistribution[index] = {
+        'percentage': 0,
+        'title': 'Título',
+        'description': 'Describe esta asignación',
+    };
 
     let thisCardPercentageDisplay = document.createElement('div');
     thisCardPercentageDisplay.className = "distribution-card-values";
@@ -173,4 +127,53 @@ const createDistributionCard = () => {
 addDistributionCardButton.addEventListener('click', e => {
     let distributionCard = createDistributionCard();
     distributionCards.insertBefore(distributionCard, distributionCards.firstElementChild);
+});
+
+const distributionCardsInputs = document.querySelectorAll('.distribution-card .input');
+distributionCardsInputs.forEach(input => {
+    const adjustWidth = () => {
+        input.style.width = '1ch';
+        input.style.width = input.scrollWidth + 'px';
+    };
+    adjustWidth();
+    const parent = input.closest('.distribution-card');
+    const index = parseInt(parent.id.replace(/\D/g, ''));
+    input.addEventListener('input', e => {
+        adjustWidth();
+        const allowedCharacters = /[^a-zA-Z0-9 .,:%()-]/g;
+        // Por el momento no se me ocurrio una forma mejor de crear un input con wrap que no sea un div con
+        // contenteditable, y esto tiene ciertos bugs. Por cuestión de tiempo, lo dejo como está.
+        if (input.tagName === 'DIV') {
+            if (e.data === ' ') {
+                e.preventDefault();
+                incomeDistribution[index].description = input.textContent;
+            }
+            else {
+                input.textContent = input.textContent.replace(allowedCharacters, '');
+                incomeDistribution[index].description = input.textContent;
+            };
+        }
+        else if (input.type === 'text') {
+            input.value = input.value.replace(allowedCharacters, '');
+            incomeDistribution[index].title = input.value;
+        }
+        else if (input.type === 'number') {
+            input.value = input.value
+            input.value = Math.max(0, Math.min(100, input.value));
+
+            let percentagesSum = incomeDistribution.reduce((sum, distr, idx) => {
+                return idx === index ? sum : sum + parseInt(distr.percentage);
+            }, 0);
+
+            if ((percentagesSum + parseInt(input.value)) > 100) {
+                input.value = 100 - percentagesSum;
+            }
+            incomeDistribution[index].percentage = input.value;
+            calculatedIncomeNode = parent.getElementsByClassName('calculated-income')[0]
+            calculatedBalanceNode = parent.getElementsByClassName('calculated-balance')[0]
+            calculatedIncomeNode.textContent = income*(input.value/100)
+            calculatedBalanceNode.textContent = balance*(input.value/100)
+        }
+
+    });
 });
