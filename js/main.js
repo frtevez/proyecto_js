@@ -61,50 +61,49 @@ distributionCardsInputs.forEach(input => {
     adjustWidth();
 
     const index = parseInt(input.closest('.distribution-card').id.replace(/\D/g, ''));
-    if (IDBOpenDBRequest)
-        input.addEventListener('input', e => {
-            adjustWidth();
-            const allowedCharacters = /[^a-zA-Z0-9 .,:%()-]/g;
-            // Por el momento no se me ocurrio una forma mejor de crear un input con wrap que no sea un div con
-            // contenteditable, y esto tiene ciertos bugs. Por cuestión de tiempo, lo dejo como está.
-            if (input.tagName === 'DIV') {
-                if (e.data === ' ') {
-                    e.preventDefault();
-                    incomeDistribution[index].description = input.textContent;
-                }
-                else {
-                    input.textContent = input.textContent.replace(allowedCharacters, '');
-                    incomeDistribution[index].description = input.textContent;
-                };
+    input.addEventListener('input', e => {
+        adjustWidth();
+        const allowedCharacters = /[^a-zA-Z0-9 .,:%()-]/g;
+        // Por el momento no se me ocurrio una forma mejor de crear un input con wrap que no sea un div con
+        // contenteditable, y esto tiene ciertos bugs. Por cuestión de tiempo, lo dejo como está.
+        if (input.tagName === 'DIV') {
+            if (e.data === ' ') {
+                e.preventDefault();
+                incomeDistribution[index].description = input.textContent;
             }
-            else if (input.type === 'text') {
-                input.value = input.value.replace(allowedCharacters, '');
-                incomeDistribution[index].title = input.value;
+            else {
+                input.textContent = input.textContent.replace(allowedCharacters, '');
+                incomeDistribution[index].description = input.textContent;
+            };
+        }
+        else if (input.type === 'text') {
+            input.value = input.value.replace(allowedCharacters, '');
+            incomeDistribution[index].title = input.value;
+        }
+        else if (input.type === 'number') {
+            input.value = input.value
+            input.value = Math.max(0, Math.min(100, input.value));
+
+            // let percentagesArray = incomeDistribution.map(distr => distr.percentage)
+            // let percentagesSum = 0;
+            // percentagesArray.forEach((percentage, idx)=>{
+            //     if (idx == index) return;
+            //     percentagesSum += parseInt(percentage);
+            // })
+
+            let percentagesSum = incomeDistribution.reduce((sum, distr, idx) => {
+                return idx === index ? sum : sum + parseInt(distr.percentage);
+            }, 0);
+
+            if ((percentagesSum + parseInt(input.value)) > 100) {
+                input.value = 100 - percentagesSum;
             }
-            else if (input.type === 'number') {
-                input.value = input.value
-                input.value = Math.max(0, Math.min(100, input.value));
+            incomeDistribution[index].percentage = input.value;
 
-                // let percentagesArray = incomeDistribution.map(distr => distr.percentage)
-                // let percentagesSum = 0;
-                // percentagesArray.forEach((percentage, idx)=>{
-                //     if (idx == index) return;
-                //     percentagesSum += parseInt(percentage);
-                // })
+            console.log(incomeDistribution);
+        }
 
-                let percentagesSum = incomeDistribution.reduce((sum, distr, idx) => {
-                    return idx === index ? sum : sum + parseInt(distr.percentage);
-                }, 0);
-
-                if ((percentagesSum + parseInt(input.value)) > 100) {
-                    input.value = 100 - percentagesSum;
-                }
-                incomeDistribution[index].percentage = input.value;
-
-                console.log(incomeDistribution);
-            }
-
-        });
+    });
 });
 
 
@@ -175,39 +174,6 @@ const createDistributionCard = () => {
     `;
     };
     updatePercentageDisplay();
-
-
-    distributionCard.className = "distribution-card";
-    distributionCard.id = `distribution-card-${incomeDistribution.length}`;
-    distributionCard.innerHTML = `
-    <div>
-        <input type="text" value="Distribución ${index}">
-        <div id="${id}">
-        </div>
-        <p>desc</p>
-    </div>
-    `;
-
-    document.addEventListener('DOMContentLoaded', e => {
-        const thisCard = document.getElementById(id);
-
-        thisCard.appendChild(thisCardPercentageDisplay);
-
-        thisCardPercentageSetterForm.onsubmit = e => {
-            e.preventDefault();
-            thisCard.replaceChild(thisCardPercentageDisplay, thisCardPercentageSetterForm);
-            const percentage = parseFloat(thisCardPercentageSetterForm.elements["percentage"].value);
-            let distributionSum = incomeDistribution.reduce((acc, cv) => acc + cv, 0)
-
-            if (distributionSum + percentage > 100.0 || isNaN(percentage)) {
-                thisCardPercentageSetterForm.elements["percentage"].value = "0";
-                return
-            };
-            incomeDistribution[index] = percentage;
-            updatePercentageDisplay();
-        };
-    });
-
     return distributionCard;
 };
 
