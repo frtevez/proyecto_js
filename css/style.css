@@ -1,133 +1,221 @@
-@import url();
+:root {
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #f1f1f1;
+  --muted: #b0b0b0;
+  --accent: #007bff;
+  --danger: #ff5e5e;
+  --input-bg: #2a2a2a;
+  --border: #333;
+}
 
-* {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
   margin: 0;
-  padding: 0;
 }
 
-a {
-  text-decoration: none;
-  color: white;
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 2rem;
 }
 
-input {
-  border: none;
-  padding: 2px 5px;
-  border-bottom: 4px solid #00000014;
-  border-radius: 15px;
-  background-color: transparent;
-  transition: all 300ms;
-}
-input:focus {
-  outline: none;
-  border: 2px solid #00000014;
-  border-radius: 15px;
-  background-color: transparent;
-}
-#appbar {
-  background-color: #0e0e0e;
-  height: 50px;
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: var(--card);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
 }
 
-#content {
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.income-section {
+  margin-bottom: 2rem;
+}
+
+.income-section input[type="number"] {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.income-type-options {
   display: flex;
-  & #sidebar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #1a1a1a;
-    width: 250px;
-    min-height: calc(100vh - 50px);
-    color: white;
-    font-family: sans-serif;
-    & .tab {
-      padding: 10px 100px;
-      margin: 0;
-      transition: all 300ms;
-      &:hover {
-        background-color: #252525;
-      }
-      &[name="selected"] {
-        background-color: #111111;
-      }
-    }
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.income-type-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.income-type-options input[type="radio"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.distribution-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.distribution-card {
+  background: var(--input-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.distribution-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.distribution-card input[type="text"],
+.input {
+  display: inline !important;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  width: min-content;
+  font-size: 1rem;
+  padding: 0;
+  word-break: break-word;
+}
+
+.distribution-card input[type="text"]:hover,
+.distribution-card input[type="text"]:focus,
+.distribution-card .input:hover,
+.distribution-card .input:focus {
+  border-bottom: 1px solid var(--accent);
+  outline: none;
+}
+
+.distribution-card-title,
+.distribution-card-description,
+.distribution-card-values {
+  position: relative;
+  cursor: pointer;
+}
+
+.distribution-card-title:hover::after,
+.distribution-card-description:hover::after,
+.distribution-card-values:hover::after {
+  opacity: 1;
+}
+
+.distribution-card-title::after,
+.distribution-card-description::after {
+  content: "\1F589";
+  position: absolute;
+  right: -1.5em;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.distribution-card-description {
+  font-size: 0.9rem;
+  min-height: 0.9rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  & div {
+    font-size: inherit;
+    min-height: inherit;
+    color: inherit;
+    white-space-collapse: preserve-spaces;
   }
-  & #distribution-card-grid {
-    background-color: #fafafa;
-    width: calc(100vw - 250px);
-    min-height: calc(100vh - 50px - 20px);
-    display: grid;
-    gap: 10px;
-    justify-items: center;
-    align-items: center;
-    grid-auto-rows: 300px;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    padding: 10px;
-    & .distribution-card {
-      width: 250px;
-      height: 300px;
-      background-color: #e8e8e8;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      align-content: center;
-      & > div {
-        width: 90%;
-        height: 90%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-evenly;
-      }
-      & form {
-        font-size: 2rem;
-        font-family: sans-serif;
-        & > input[type="number"] {
-          width: 5rem;
-          height: 2rem;
-          font-size: 2rem;
-          border-radius: 10px;
-        }
-      }
-      & .distribution-card-values {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      & .distribution-card-percentage {
-        font-size: 3rem;
-        font-family: sans-serif;
-        color: #717171;
-      }
-      & .distribution-card-income-x-percentage {
-        font-size: 1rem;
-        font-family: sans-serif;
-        color: #181818;
-      }
-      & .distribution-card-balance-x-percentage {
-        font-size: 1rem;
-        font-family: sans-serif;
-        color: #181818;
-      }
-    }
-    & #add-distribution-card {
-      display: flex;
-      user-select: none;
-      color: #717171;
-      align-items: center;
-      justify-content: center;
-      font-size: 5rem;
-      font-weight: bolder;
-      width: 50px;
-      height: 50px;
-      padding: 20px;
-      border-radius: 45px;
-      background-color: #cecece;
-      transition: all 300ms;
-      &:hover {
-        background-color: #b8b8b8;
-      }
-    }
-  }
+}
+
+.distribution-card-values {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.remove-distribution-card {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--danger);
+  border-radius: 50%;
+  transition: background 0.2s ease;
+  padding: 0.3rem;
+  line-height: 1;
+}
+
+.remove-distribution-card::before {
+  content: "\1F5D1";
+}
+
+.remove-distribution-card:hover {
+  background: rgba(255, 94, 94, 0.15);
+}
+
+.add-btn,
+.set-balance-btn {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  background-color: var(--accent);
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.add-btn:hover,
+.set-balance-btn:hover {
+  background-color: #0056b3;
+}
+
+div:where(.swal2-container) .swal2-radio {
+  background: transparent !important;
+}
+
+.swal2-radio label {
+  display: inline-flex;
+  background-color: transparent;
+  align-items: center;
+  gap: 0.5em;
+  margin-right: 1rem;
+  color: var(--text);
+}
+
+.swal2-radio input[type="radio"] {
+  accent-color: var(--accent);
+  cursor: pointer;
 }

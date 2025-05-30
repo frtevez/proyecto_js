@@ -4,22 +4,104 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./css/style.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="./js/main.js"></script>
     <title>Proyecto JS</title>
   </head>
   <body>
-    <section id="appbar">
-      <p style="color: white; text-align:end">Ingresos (Placeholder): $10.450</p>
-    </section>
-    <section id="content">
-      <div id="sidebar">
-        <a id="distribution-tab" class="tab" name="selected" href="index.html"><h2>Distribución</h2></a>
-        <a id="income-tab" class="tab" href="./pages/income.html"><h2>Ingresos</h2></a>
+    <div class="container">
+      <h1>Asignación de Ingresos</h1>
+
+      <div class="income-section">
+        <label for="income">Ingresos</label>
+        <input type="number" id="income" placeholder="Ingresa un Número" />
+        <div class="income-type-options">
+          <label
+            ><input type="radio" name="income-type" value="yearly" checked />
+            Anual</label
+          >
+          <label
+            ><input type="radio" name="income-type" value="monthly" />
+            Mensual</label
+          >
+        </div>
+        <div class="summary">
+          <span>Balance Actual: $<span id="balance">0.00</span></span>
+          <span>Ingresos: $<span id="yearly-income">0.00</span></span>
+        </div>
+        <button class="set-balance-btn">Establecer Balance</button>
       </div>
-      <div id="distribution-card-grid">
-        <article id="add-distribution-card">+</article>
-      </div>
-    </section>
-    <section id="footer"></section>
+
+      <div class="distribution-cards" id="distribution-cards">
+        <div class="distribution-card" id="d-card-0">
+          <div class="distribution-card-header">
+            <div>
+              <div class="distribution-card-title">
+                <input
+                  class="input"
+                  type="number"
+                  max="100"
+                  min="0"
+                  class="input"
+                  value="30"
+                />% –
+                <input
+                  class="input"
+                  type="text"
+                  value="Ahorros"
+                  maxlength="45"
+                />
+              </div>
+              <div class="distribution-card-description">
+                <div class="input" contenteditable="true" >
+                  Reserva para objetivos y necesidades futuras.
+                </div>
+              </div>
+              <div class="distribution-card-values">
+                Calculated: $0.00 / 0.00
+              </div>
+            </div>
+            <button class="remove-distribution-card"></button>
+          </div>
+        </div>
+
+        <div class="distribution-card" id="d-card-1">
+          <div class="distribution-card-header">
+            <div>
+              <div class="distribution-card-title">
+                <input
+                  class="input"
+                  type="number"
+                  max="100"
+                  min="0"
+                  class="input"
+                  value="20"
+                />% –
+                <input
+                  class="input"
+                  type="text"
+                  value="Inversiones"
+                  maxlength="45"
+                />
+              </div>
+              <div class="distribution-card-description">
+                <div class="input" contenteditable="true" >
+                  Asignación para distintas vías de inversión.
+                </div>
+              </div>
+              <div class="distribution-card-values">
+                Calculated: $0.00 / 0.00
+              </div>
+            </div>
+            <button class="remove-distribution-card"></button>
+          </div>
+        </div>
+
+      <button class="add-btn" id="add-distribution-card">
+        + Agregar Asignación
+      </button>
+    </div>
+
+    <script></script>
   </body>
 </html>
