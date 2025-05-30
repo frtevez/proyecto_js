@@ -84,13 +84,6 @@ distributionCardsInputs.forEach(input => {
             input.value = input.value
             input.value = Math.max(0, Math.min(100, input.value));
 
-            // let percentagesArray = incomeDistribution.map(distr => distr.percentage)
-            // let percentagesSum = 0;
-            // percentagesArray.forEach((percentage, idx)=>{
-            //     if (idx == index) return;
-            //     percentagesSum += parseInt(percentage);
-            // })
-
             let percentagesSum = incomeDistribution.reduce((sum, distr, idx) => {
                 return idx === index ? sum : sum + parseInt(distr.percentage);
             }, 0);
