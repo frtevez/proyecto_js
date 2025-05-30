@@ -2,7 +2,7 @@ const distributionCards = document.getElementById('distribution-cards');
 const addDistributionCardButton = document.getElementById('add-distribution-card');
 let income = 10000;
 let balance = 1000000;
-let incomeDistribution = [{}, {}];
+let incomeDistribution = [{ 'id': 0 }, { 'id': 3 }];
 
 
 const setBalance = () => {
@@ -52,17 +52,88 @@ const setBalance = () => {
 const setBalanceBtn = document.getElementsByClassName('set-balance-btn')[0];
 setBalanceBtn.addEventListener('click', e => setBalance())
 
+const getCalculatedIncomeAndBalance = (parent, percentage) => {
+    const formattedIncome = (income * (percentage / 100)).toLocaleString('es-ES', { style: 'currency', currency: 'USD' });
+    const formattedBalance = (balance * (percentage / 100)).toLocaleString('es-ES', { style: 'currency', currency: 'USD' });
+    let calculatedIncomeNode = parent.getElementsByClassName('calculated-income')[0];
+    let calculatedBalanceNode = parent.getElementsByClassName('calculated-balance')[0];
+    calculatedIncomeNode.textContent = formattedIncome;
+    calculatedBalanceNode.textContent = formattedBalance;
+}
 
+const updateDistributionCardsInputs = () => {
+    const distributionCardsInputs = document.querySelectorAll('.distribution-card .input');
+    distributionCardsInputs.forEach(input => {
+        const adjustWidth = () => {
+            input.style.width = '1ch';
+            input.style.width = input.scrollWidth + 'px';
+        };
+        adjustWidth();
 
+        const parent = input.closest('.distribution-card');
+        const index = parseInt(parent.id.replace(/\D/g, ''));
 
-const createDistributionCard = () => {
+        const handleInput = (e) => {
+            adjustWidth();
+            const allowedCharacters = /[^a-zA-Z0-9 .,:%()-]/g;
+
+            if (input.tagName === 'DIV') {
+                if (e.data === ' ')
+                    e.preventDefault();
+                else
+                    input.textContent = input.textContent.replace(allowedCharacters, '');
+                incomeDistribution[index].description = input.textContent;
+
+            } else if (input.type === 'text') {
+                input.value = input.value.replace(allowedCharacters, '');
+                incomeDistribution[index].title = input.value;
+
+            } else if (input.type === 'number') {
+                input.value = Math.max(0, Math.min(100, input.value));
+
+                let percentagesSum = incomeDistribution.reduce((sum, distr, idx) => {
+                    return idx === index ? sum : sum + parseInt(distr.percentage);
+                }, 0);
+
+                if ((percentagesSum + parseInt(input.value)) > 100) {
+                    input.value = 100 - percentagesSum;
+                }
+                incomeDistribution[index].percentage = input.value;
+
+                getCalculatedIncomeAndBalance(parent, input.value)
+
+            }
+            console.log(incomeDistribution);
+        };
+
+        input.removeEventListener('input', handleInput);
+        input.addEventListener('input', handleInput);
+    });
+}
+
+const getSmallestUnusedNumber = (array) => {
+    for (let i = 0; i <= array.length; i++) {
+        if (!array.includes(i)) {
+            return i;
+        }
+    }
+
+};
+
+const createDistributionCard = (percentage = 10, title = "Título", description = 'Describe esta asignación.') => {
     let distributionCard = document.createElement("div");
-    const index = incomeDistribution.length;
-    const id = `d-card-${index}`;
+    const id = getSmallestUnusedNumber(incomeDistribution.map(distr => distr.id));
+    const elementId = `d-card-${id}`;
     distributionCard.className = 'distribution-card';
-    distributionCard.id = id;
-    console.log(id);
-    
+    distributionCard.id = elementId;
+
+    incomeDistribution.splice(id, 0, {
+        'id': id,
+        'percentage': percentage,
+        'title': title,
+        'description': description,
+    });
+
 
     distributionCard.innerHTML = `
         <div class="distribution-card-header">
@@ -74,106 +145,41 @@ const createDistributionCard = () => {
                   max="100"
                   min="0"
                   class="input"
-                  value="0"
+                  value="${percentage}"
                 />% –
                 <input
                   class="input"
                   type="text"
-                  value="Título"
+                  value="${title}"
                   maxlength="45"
                 />
               </div>
               <div class="distribution-card-description">
                 <div class="input" contenteditable="true" >
-                  Describe esta asignación.
+                  ${description}
                 </div>
               </div>
               <div class="distribution-card-values">
-                Calculated: $0.00 / 0.00
+                Calculated: <span class="calculated-income">$0.00</span> / <span class="calculated-balance">0.00</span>
               </div>
             </div>
             <button class="remove-distribution-card"></button>
         </div>
     `
-
-    incomeDistribution[index] = {
-        'percentage': 0,
-        'title': 'Título',
-        'description': 'Describe esta asignación',
-    };
+    //Revisés lo de DOMContentLoaded pero no funcionó y no tengo mucho tiempo.
+    setTimeout(() => getCalculatedIncomeAndBalance(distributionCard, percentage), 0)
 
     let thisCardPercentageDisplay = document.createElement('div');
     thisCardPercentageDisplay.className = "distribution-card-values";
-    const updatePercentageDisplay = () => {
-        const formattedIncome = (income * incomeDistribution[index] / 100).toLocaleString('es-ES', { style: 'currency', currency: 'USD' });
-        const formattedBalance = (balance * incomeDistribution[index] / 100).toLocaleString('es-ES', { style: 'currency', currency: 'USD' });
 
-        thisCardPercentageDisplay.innerHTML = `
-        <p class="distribution-card-percentage">
-        ${incomeDistribution[index]}%
-        </p>
-        <p class="distribution-card-income-x-percentage">
-        Ingreso: ${formattedIncome}
-        </p>
-        <p class="distribution-card-balance-x-percentage">
-        Balance: ${formattedBalance}
-        </p>
-    `;
-    };
-    updatePercentageDisplay();
     return distributionCard;
 };
+
 
 addDistributionCardButton.addEventListener('click', e => {
     let distributionCard = createDistributionCard();
     distributionCards.insertBefore(distributionCard, distributionCards.firstElementChild);
+    updateDistributionCardsInputs();
 });
 
-const distributionCardsInputs = document.querySelectorAll('.distribution-card .input');
-distributionCardsInputs.forEach(input => {
-    const adjustWidth = () => {
-        input.style.width = '1ch';
-        input.style.width = input.scrollWidth + 'px';
-    };
-    adjustWidth();
-    const parent = input.closest('.distribution-card');
-    const index = parseInt(parent.id.replace(/\D/g, ''));
-    input.addEventListener('input', e => {
-        adjustWidth();
-        const allowedCharacters = /[^a-zA-Z0-9 .,:%()-]/g;
-        // Por el momento no se me ocurrio una forma mejor de crear un input con wrap que no sea un div con
-        // contenteditable, y esto tiene ciertos bugs. Por cuestión de tiempo, lo dejo como está.
-        if (input.tagName === 'DIV') {
-            if (e.data === ' ') {
-                e.preventDefault();
-                incomeDistribution[index].description = input.textContent;
-            }
-            else {
-                input.textContent = input.textContent.replace(allowedCharacters, '');
-                incomeDistribution[index].description = input.textContent;
-            };
-        }
-        else if (input.type === 'text') {
-            input.value = input.value.replace(allowedCharacters, '');
-            incomeDistribution[index].title = input.value;
-        }
-        else if (input.type === 'number') {
-            input.value = input.value
-            input.value = Math.max(0, Math.min(100, input.value));
-
-            let percentagesSum = incomeDistribution.reduce((sum, distr, idx) => {
-                return idx === index ? sum : sum + parseInt(distr.percentage);
-            }, 0);
-
-            if ((percentagesSum + parseInt(input.value)) > 100) {
-                input.value = 100 - percentagesSum;
-            }
-            incomeDistribution[index].percentage = input.value;
-            calculatedIncomeNode = parent.getElementsByClassName('calculated-income')[0]
-            calculatedBalanceNode = parent.getElementsByClassName('calculated-balance')[0]
-            calculatedIncomeNode.textContent = income*(input.value/100)
-            calculatedBalanceNode.textContent = balance*(input.value/100)
-        }
-
-    });
-});
+updateDistributionCardsInputs();
