@@ -1,7 +1,7 @@
 const distributionCards = document.getElementById('distribution-cards');
 const addDistributionCardButton = document.getElementById('add-distribution-card');
 let income = 10000;
-let balance = 1000000;
+let balance = 0;
 let incomeDistributionFromStorage = JSON.parse(localStorage.getItem('incomeDistribution'))
 let incomeDistribution = incomeDistributionFromStorage ?? [];
 
@@ -56,13 +56,14 @@ const setBalance = () => {
         }
     }).then(result => {
         if (result.isConfirmed && result.value) {
-            const currentBalance = parseFloat(document.getElementById("balance").textContent);
             const { action, value } = result.value;
-            let newBalance = currentBalance;
+            let newBalance = balance;
             if (action === 'change') newBalance = value;
             if (action === 'add') newBalance += value;
             if (action === 'subtract') newBalance -= value;
-            document.getElementById("balance").textContent = newBalance.toFixed(2);
+            balance = newBalance;
+            document.getElementById("balance").textContent = balance.toFixed(2);
+            loadIncomeDistribution();
         }
     });
 }
@@ -120,7 +121,6 @@ const updateDistributionCardsEvents = () => {
                 getCalculatedIncomeAndBalance(parent, input.value)
 
             }
-            console.log(incomeDistribution);
         };
 
         input.removeEventListener('input', handleInput);
@@ -130,10 +130,12 @@ const updateDistributionCardsEvents = () => {
     distributionCardDeleteButtons.forEach(button => {
         const parent = button.closest('.distribution-card');
         const index = incomeDistribution.findIndex(distr => distr.id == parseInt(parent.id.replace(/\D/g, '')));
-        button.addEventListener('click', e => {
+        const handleDelete = e => {
             incomeDistribution.splice(index, 1);
             parent.remove();
-        });
+        }
+        button.removeEventListener('click', handleDelete);
+        button.addEventListener('click', handleDelete);
     }
     );
 };
@@ -212,6 +214,10 @@ addDistributionCardButton.addEventListener('click', e => {
 });
 
 const loadIncomeDistribution = () => {
+    let distributionCardsContainer = document.getElementById('distribution-cards');
+    while (distributionCardsContainer.firstChild) {
+        distributionCardsContainer.removeChild(distributionCardsContainer.firstChild);
+    }
     incomeDistribution.forEach(distr => {
         let distributionCard = createDistributionCard(distr.id, distr.percentage, distr.title, distr.description);
         distributionCards.insertBefore(distributionCard, distributionCards.firstElementChild);
