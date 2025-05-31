@@ -32,76 +32,26 @@
         <button class="set-balance-btn">Establecer Balance</button>
       </div>
 
-      <div class="distribution-cards" id="distribution-cards">
-        <div class="distribution-card" id="d-card-3">
-          <div class="distribution-card-header">
-            <div>
-              <div class="distribution-card-title">
-                <input
-                  class="input"
-                  type="number"
-                  max="100"
-                  min="0"
-                  class="input"
-                  value="30"
-                />% –
-                <input
-                  class="input"
-                  type="text"
-                  value="Ahorros"
-                  maxlength="45"
-                />
-              </div>
-              <div class="distribution-card-description">
-                <div class="input" contenteditable="true" >
-                  Reserva para objetivos y necesidades futuras.
-                </div>
-              </div>
-              <div class="distribution-card-values">
-                Calculated: <span class="calculated-income">$10.00</span> / <span class="calculated-balance">10.00</span>
-              </div>
-            </div>
-            <button class="remove-distribution-card"></button>
-          </div>
-        </div>
-
-        <div class="distribution-card" id="d-card-0">
-          <div class="distribution-card-header">
-            <div>
-              <div class="distribution-card-title">
-                <input
-                  class="input"
-                  type="number"
-                  max="100"
-                  min="0"
-                  class="input"
-                  value="20"
-                />% –
-                <input
-                  class="input"
-                  type="text"
-                  value="Inversiones"
-                  maxlength="45"
-                />
-              </div>
-              <div class="distribution-card-description">
-                <div class="input" contenteditable="true" >
-                  Asignación para distintas vías de inversión.
-                </div>
-              </div>
-              <div class="distribution-card-values">
-                Calculated: <span class="calculated-income">$0.00</span> / <span class="calculated-balance">0.00</span>
-              </div>
-            </div>
-            <button class="remove-distribution-card"></button>
-          </div>
-        </div>
+      <div class="distribution-cards" id="distribution-cards"></div>
 
       <button class="add-btn" id="add-distribution-card">
         + Agregar Asignación
       </button>
     </div>
 
-    <script></script>
+    <button
+      id="save-button"
+      title="Guardar"
+      onclick="saveIncomeDistribution()"
+    >
+      💾
+    </button>
+    <button
+      id="clear-storage-button"
+      title="Borrar del Almacenamiento"
+      onclick="clearLocalStorage()"
+    >
+      🗑️
+    </button>
   </body>
 </html>

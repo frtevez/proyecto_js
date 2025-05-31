@@ -1,10 +1,12 @@
 # proyecto_js
 
-Aplicación de Asignación de Ingresos (Pre-entrega 2)
+Aplicación de Asignación de Ingresos (Final)
 ---
 
-En esta ocasión el código es un poco rudimentario, pero creo que las consignas se cumplen:
-- Cambios en el DOM desde javascript
-- App con una funcionalidad (el ingreso se distribuye entre los porcentajes de distribución creados, y no se puede exceder el 100% entre todas las cartas de distribución)
-
-Más adelante estaré mejorando la aplicación...
+La aplicación consiste en un administrador de asignaciones de ingresos:
+- Se establecen los ingresos
+- Se establece el balance actual
+- Se crean asignaciones medidas en porcentajes que en suma no pueden superar el 100%
+- Se calculan automáticamente los porcentajes correspondientes de los ingresos y del balance
+- Se guarda la configuración con un botón flotante
+- Se borra todo lo guardado con otro botón flotante

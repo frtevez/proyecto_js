@@ -219,3 +219,35 @@ div:where(.swal2-container) .swal2-radio {
   accent-color: var(--accent);
   cursor: pointer;
 }
+
+#clear-storage-button, #save-button {
+  position: fixed;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+#clear-storage-button {
+  bottom: 20px;
+  background-color: #ff5e5e;
+}
+
+#clear-storage-button:hover {
+  background-color: #e64444;
+}
+
+#save-button {
+  bottom: 80px;
+  background-color: #007bff;
+}
+
+#save-button:hover {
+  background-color: #0056b3;
+}

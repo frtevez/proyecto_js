@@ -2,8 +2,18 @@ const distributionCards = document.getElementById('distribution-cards');
 const addDistributionCardButton = document.getElementById('add-distribution-card');
 let income = 10000;
 let balance = 1000000;
-let incomeDistribution = [{ 'id': 0 }, { 'id': 3 }];
+let incomeDistribution = JSON.parse(localStorage.getItem('incomeDistribution')) ?? [
+    { 'id': 0, 'percentage': 20, 'title': 'Inversiones', 'description': 'Asignación para distintas vías de inversión.' },
+    { 'id': 3, 'percentage': 30, 'title': 'Ahorros', 'description': 'Reserva para objetivos y necesidades futuras.' }
+];
 
+const saveIncomeDistribution = () => {
+    localStorage.setItem('incomeDistribution', JSON.stringify(incomeDistribution));
+}
+
+const clearLocalStorage = () => {
+    localStorage.removeItem('incomeDistribution');
+}
 
 const setBalance = () => {
     Swal.fire({
@@ -120,19 +130,21 @@ const getSmallestUnusedNumber = (array) => {
 
 };
 
-const createDistributionCard = (percentage = 10, title = "Título", description = 'Describe esta asignación.') => {
+const createDistributionCard = (storedId = null, percentage = 10, title = "Título", description = 'Describe esta asignación.') => {
     let distributionCard = document.createElement("div");
-    const id = getSmallestUnusedNumber(incomeDistribution.map(distr => distr.id));
+    const id = storedId ?? getSmallestUnusedNumber(incomeDistribution.map(distr => distr.id));
     const elementId = `d-card-${id}`;
     distributionCard.className = 'distribution-card';
     distributionCard.id = elementId;
 
-    incomeDistribution.splice(id, 0, {
-        'id': id,
-        'percentage': percentage,
-        'title': title,
-        'description': description,
-    });
+    if (storedId === null) {
+        incomeDistribution.splice(id, 0, {
+            'id': id,
+            'percentage': percentage,
+            'title': title,
+            'description': description,
+        })
+    };
 
 
     distributionCard.innerHTML = `
@@ -182,4 +194,13 @@ addDistributionCardButton.addEventListener('click', e => {
     updateDistributionCardsInputs();
 });
 
-updateDistributionCardsInputs();
+const loadIncomeDistribution = () => {
+    incomeDistribution.forEach(distr => {
+        let distributionCard = createDistributionCard(distr.id, distr.percentage, distr.title, distr.description);
+        distributionCards.insertBefore(distributionCard, distributionCards.firstElementChild);
+        updateDistributionCardsInputs();
+    })
+}
+
+loadIncomeDistribution();
+
