@@ -22,6 +22,14 @@ const clearLocalStorage = () => {
     localStorage.removeItem('incomeDistribution');
 }
 
+const incomeInput = document.getElementById('income');
+const incomeSummary = document.getElementById('income-summary');
+incomeInput.addEventListener('input', e => {
+    income = e.target.value;
+    incomeSummary.textContent = e.target.value;
+    loadIncomeDistribution();
+})
+
 const setBalance = () => {
     Swal.fire({
         title: 'Cambiar Balance Actual',
