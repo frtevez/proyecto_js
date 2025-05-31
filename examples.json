@@ -1,0 +1,14 @@
+[
+  {
+    "id": 0,
+    "percentage": 20,
+    "title": "Inversiones",
+    "description": "Asignación para distintas vías de inversión."
+  },
+  {
+    "id": 3,
+    "percentage": 30,
+    "title": "Ahorros",
+    "description": "Reserva para objetivos y necesidades futuras."
+  }
+]

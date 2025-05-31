@@ -2,10 +2,17 @@ const distributionCards = document.getElementById('distribution-cards');
 const addDistributionCardButton = document.getElementById('add-distribution-card');
 let income = 10000;
 let balance = 1000000;
-let incomeDistribution = JSON.parse(localStorage.getItem('incomeDistribution')) ?? [
-    { 'id': 0, 'percentage': 20, 'title': 'Inversiones', 'description': 'Asignación para distintas vías de inversión.' },
-    { 'id': 3, 'percentage': 30, 'title': 'Ahorros', 'description': 'Reserva para objetivos y necesidades futuras.' }
-];
+let incomeDistributionFromStorage = JSON.parse(localStorage.getItem('incomeDistribution'))
+let incomeDistribution = incomeDistributionFromStorage ?? [];
+
+if (incomeDistribution.length == 0) {
+    fetch('../examples.json')
+        .then(response => response.json())
+        .then(data => {
+            incomeDistribution = data;
+            loadIncomeDistribution();
+        })
+}
 
 const saveIncomeDistribution = () => {
     localStorage.setItem('incomeDistribution', JSON.stringify(incomeDistribution));
@@ -71,7 +78,7 @@ const getCalculatedIncomeAndBalance = (parent, percentage) => {
     calculatedBalanceNode.textContent = formattedBalance;
 }
 
-const updateDistributionCardsInputs = () => {
+const updateDistributionCardsEvents = () => {
     const distributionCardsInputs = document.querySelectorAll('.distribution-card .input');
     distributionCardsInputs.forEach(input => {
         const adjustWidth = () => {
@@ -81,7 +88,7 @@ const updateDistributionCardsInputs = () => {
         adjustWidth();
 
         const parent = input.closest('.distribution-card');
-        const index = parseInt(parent.id.replace(/\D/g, ''));
+        const index = incomeDistribution.findIndex(distr => distr.id == parseInt(parent.id.replace(/\D/g, '')));
 
         const handleInput = (e) => {
             adjustWidth();
@@ -119,7 +126,17 @@ const updateDistributionCardsInputs = () => {
         input.removeEventListener('input', handleInput);
         input.addEventListener('input', handleInput);
     });
-}
+    const distributionCardDeleteButtons = document.querySelectorAll('.remove-distribution-card');
+    distributionCardDeleteButtons.forEach(button => {
+        const parent = button.closest('.distribution-card');
+        const index = incomeDistribution.findIndex(distr => distr.id == parseInt(parent.id.replace(/\D/g, '')));
+        button.addEventListener('click', e => {
+            incomeDistribution.splice(index, 1);
+            parent.remove();
+        });
+    }
+    );
+};
 
 const getSmallestUnusedNumber = (array) => {
     for (let i = 0; i <= array.length; i++) {
@@ -191,16 +208,17 @@ const createDistributionCard = (storedId = null, percentage = 10, title = "Títu
 addDistributionCardButton.addEventListener('click', e => {
     let distributionCard = createDistributionCard();
     distributionCards.insertBefore(distributionCard, distributionCards.firstElementChild);
-    updateDistributionCardsInputs();
+    updateDistributionCardsEvents();
 });
 
 const loadIncomeDistribution = () => {
     incomeDistribution.forEach(distr => {
         let distributionCard = createDistributionCard(distr.id, distr.percentage, distr.title, distr.description);
         distributionCards.insertBefore(distributionCard, distributionCards.firstElementChild);
-        updateDistributionCardsInputs();
+        updateDistributionCardsEvents();
     })
 }
 
 loadIncomeDistribution();
+
 
